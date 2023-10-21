@@ -73,8 +73,11 @@ const handleFocusLevelChange = (level: FocusLevel) => {
           <!-- Row -->
           <div class="flex  border">
             <div v-if="currentFocusLevel !== 'none' && ['columns', 'all'].includes(<string>currentFocusLevel)"
-                 class="flex flex-col h-full border bg-gray-200 ">
-              <button class="flex p-2" type="button">Add col</button>
+                 class="flex flex-col border items-center justify-center">
+              <button class="flex p-2 bg-gray-200 border rounded-full" type="button">
+                <Icon name="ic:round-plus"/>
+                <span class="sr-only">Add col</span>
+              </button>
             </div>
             <!-- Column wrapper -->
             <div v-for="col in row.columns" class="flex flex-1">
@@ -86,25 +89,41 @@ const handleFocusLevelChange = (level: FocusLevel) => {
                   <FormField :field="field"/>
                 </div>
                 <div v-if="currentFocusLevel !== 'none' && ['fields', 'all'].includes(<string>currentFocusLevel)"
-                     class="flex flex-col  border bg-gray-200 ">
-                  <button class="flex p-2 w-full justify-center" type="button">Add field</button>
+                     class="flex flex-col border justify-center items-center">
+
+                  <button class="flex p-2 border bg-gray-200 rounded-full" type="button">
+                    <Icon name="ic:round-plus"/>
+                    <span class="sr-only">Add field</span>
+                  </button>
                 </div>
               </div>
               <div v-if="
                 currentFocusLevel !== 'none' && ['columns', 'all'].includes(<string>currentFocusLevel)
                 && row.columns.length > 0 &&  col.order !== row.columns[row.columns.length - 1].order
-              ">
-                <button class="flex p-2 w-full justify-center bg-gray-200" type="button">Add col</button>
+              "
+                   class="flex flex-col border items-center justify-center">
+                <button class="flex p-2 bg-gray-200 border rounded-full" type="button">
+                  <Icon name="ic:round-plus"/>
+                  <span class="sr-only">Add col</span>
+                </button>
               </div>
             </div>
+
             <div v-if="currentFocusLevel !== 'none' && ['columns', 'all'].includes(<string>currentFocusLevel)"
-                 class="flex flex-col h-full  border bg-gray-200 ">
-              <button class="flex p-2" type="button">Add col</button>
+                 class="flex flex-col border items-center justify-center">
+              <button class="flex p-2 bg-gray-200 border rounded-full" type="button">
+                <Icon name="ic:round-plus"/>
+                <span class="sr-only">Add col</span>
+              </button>
             </div>
+
           </div>
           <div v-if="currentFocusLevel !== 'none'  && ['rows', 'all'].includes(<string>currentFocusLevel)"
-               class="flex flex-col  border bg-gray-200  ">
-            <button class="flex p-2 w-full justify-center" type="button">Add row</button>
+               class="flex flex-col justify-center items-center border">
+            <button class="flex p-2 w-fit border bg-gray-200 justify-center rounded-full" type="button">
+              <Icon name="ic:round-plus"/>
+              <span class="sr-only">Add row</span>
+            </button>
           </div>
         </div>
       </form>
