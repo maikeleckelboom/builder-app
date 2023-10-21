@@ -5,7 +5,6 @@ export default defineNuxtConfig({
     "nuxt-headlessui",
     "@nuxtjs/tailwindcss",
     "nuxt-icon",
-    "@nuxtjs/google-fonts",
   ],
   headlessui: {
     prefix: 'Headless'
@@ -13,4 +12,4 @@ export default defineNuxtConfig({
   components: {
     dirs: [{ path: '~/components', pathPrefix: false }],
   },
-}) 
+})
