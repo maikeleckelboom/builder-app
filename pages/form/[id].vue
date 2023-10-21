@@ -14,7 +14,7 @@ if (error.value) {
 
 type FocusLevel = 'rows' | 'columns' | 'fields' | 'none' | 'all'
 
-const currentFocusLevel = ref<FocusLevel>('rows')
+const currentFocusLevel = ref<FocusLevel>('all')
 
 const handleFocusLevelChange = (level: FocusLevel) => {
   currentFocusLevel.value = level
@@ -66,38 +66,44 @@ const handleFocusLevelChange = (level: FocusLevel) => {
 
     <div class="flex flex-col">
       <!-- Form -->
-      <form class="flex flex-col gap-2"
-            v-if="data">
+      <form v-if="data"
+            class="flex flex-col ">
         <!-- Row wrapper -->
-        <div v-for="row in data.rows" class="flex flex-col">
+        <div v-for="row in data.rows" class="flex flex-col flex-1">
           <!-- Row -->
-          <div class="flex gap-2 border">
+          <div class="flex  border">
             <div v-if="currentFocusLevel !== 'none' && ['columns', 'all'].includes(<string>currentFocusLevel)"
-                 class="flex flex-col h-full gap-2 border bg-gray-200 ">
+                 class="flex flex-col h-full border bg-gray-200 ">
               <button class="flex p-2" type="button">Add col</button>
             </div>
             <!-- Column wrapper -->
-            <div v-for="col in row.columns" class="flex flex-col flex-1">
+            <div v-for="col in row.columns" class="flex flex-1">
               <!-- Column -->
-              <div class="flex flex-col border gap-2">
+              <div class="flex flex-col border flex-1">
                 <!-- Field wrapper -->
                 <div v-for="field in col.fields" class="border flex flex-col">
                   <!-- Field -->
                   <FormField :field="field"/>
                 </div>
                 <div v-if="currentFocusLevel !== 'none' && ['fields', 'all'].includes(<string>currentFocusLevel)"
-                     class="flex flex-col gap-2 border bg-gray-200 ">
+                     class="flex flex-col  border bg-gray-200 ">
                   <button class="flex p-2 w-full justify-center" type="button">Add field</button>
                 </div>
               </div>
+              <div v-if="
+                currentFocusLevel !== 'none' && ['columns', 'all'].includes(<string>currentFocusLevel)
+                && row.columns.length > 0 &&  col.order !== row.columns[row.columns.length - 1].order
+              ">
+                <button class="flex p-2 w-full justify-center bg-gray-200" type="button">Add col</button>
+              </div>
             </div>
             <div v-if="currentFocusLevel !== 'none' && ['columns', 'all'].includes(<string>currentFocusLevel)"
-                 class="flex flex-col h-full gap-2 border bg-gray-200 ">
+                 class="flex flex-col h-full  border bg-gray-200 ">
               <button class="flex p-2" type="button">Add col</button>
             </div>
           </div>
           <div v-if="currentFocusLevel !== 'none'  && ['rows', 'all'].includes(<string>currentFocusLevel)"
-               class="flex flex-col gap-2 border bg-gray-200 my-2 ">
+               class="flex flex-col  border bg-gray-200  ">
             <button class="flex p-2 w-full justify-center" type="button">Add row</button>
           </div>
         </div>
