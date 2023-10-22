@@ -1,12 +1,23 @@
 <script lang="ts" setup>
-import {Form} from '~/types';
+import {Column, Form, Row} from '~/types';
+import FormButton from "~/components/Form/components/FormButton.vue";
 
 const route = useRoute()
 
 const {
   data,
   error
-} = await useAsyncData<Form>('form', () => $fetch(`http://127.0.0.1:8000/api/v1/form/${route.params.id}`))
+} = await useAsyncData<Form>('form', () => $fetch(`http://127.0.0.1:8000/api/v1/form/${route.params.id}`), {
+  transform: (data: Form) => ({
+    ...data,
+    rows: data.rows.map(row => ({
+      ...row,
+      state: {
+        isHovering: false
+      }
+    }))
+  })
+})
 
 if (error.value) {
   console.error(error.value)
@@ -19,6 +30,27 @@ const currentFocusLevel = ref<FocusLevel>('all')
 const handleFocusLevelChange = (level: FocusLevel) => {
   currentFocusLevel.value = level
 }
+
+const rowsAreVisible = computed(() => currentFocusLevel.value !== 'none' && ['rows', 'all'].includes(currentFocusLevel.value))
+const columnsAreVisible = computed(() => currentFocusLevel.value !== 'none' && ['columns', 'all'].includes(currentFocusLevel.value))
+const fieldsAreVisible = computed(() => currentFocusLevel.value !== 'none' && ['fields', 'all'].includes(currentFocusLevel.value))
+
+const isMiddleColumn = (row: Row, col: Column,) => {
+  return row.columns.length > 0 && col.order !== row.columns[row.columns.length - 1].order
+}
+
+const isFirstRow = (form: Form, row: Row) => {
+  return form.rows.length > 0 && row.order === form.rows[0].order
+}
+
+type EditMode = 'layout' | 'fields'
+
+const editMode = ref<EditMode>('layout')
+
+const handleEditModeChange = (mode: EditMode) => {
+  editMode.value = mode
+}
+
 </script>
 
 <template>
@@ -66,18 +98,22 @@ const handleFocusLevelChange = (level: FocusLevel) => {
 
     <div class="flex flex-col">
       <!-- Form -->
-      <form v-if="data"
-            class="flex flex-col ">
+      <form v-if="data" class="flex flex-col ">
         <!-- Row wrapper -->
-        <div v-for="row in data.rows" class="flex flex-col flex-1">
+        <div v-for="row in data.rows" class="flex flex-col flex-1 group ">
+          <div v-if="isFirstRow(data, row) && rowsAreVisible"
+               class="flex flex-col justify-center items-center border">
+            <FormButton class="absolute">
+              Add row
+            </FormButton>
+          </div>
           <!-- Row -->
-          <div class="flex  border">
-            <div v-if="currentFocusLevel !== 'none' && ['columns', 'all'].includes(<string>currentFocusLevel)"
+          <div class="flex border">
+            <div v-if="columnsAreVisible"
                  class="flex flex-col border items-center justify-center">
-              <button class="flex p-2 bg-gray-200 border rounded-full" type="button">
-                <Icon name="ic:round-plus"/>
-                <span class="sr-only">Add col</span>
-              </button>
+              <FormButton class="absolute">
+                Add column
+              </FormButton>
             </div>
             <!-- Column wrapper -->
             <div v-for="col in row.columns" class="flex flex-1">
@@ -88,42 +124,37 @@ const handleFocusLevelChange = (level: FocusLevel) => {
                   <!-- Field -->
                   <FormField :field="field"/>
                 </div>
-                <div v-if="currentFocusLevel !== 'none' && ['fields', 'all'].includes(<string>currentFocusLevel)"
-                     class="flex flex-col border justify-center items-center">
-
-                  <button class="flex p-2 border bg-gray-200 rounded-full" type="button">
-                    <Icon name="ic:round-plus"/>
-                    <span class="sr-only">Add field</span>
-                  </button>
+                <div v-if="fieldsAreVisible"
+                     class="flex flex-col   ">
+                  <FormButton class="rounded-none p-2">
+                    <template #label>
+                      Add field
+                    </template>
+                  </FormButton>
+<!--                  <button>-->
+<!--                    Add Field-->
+<!--                  </button>-->
                 </div>
               </div>
-              <div v-if="
-                currentFocusLevel !== 'none' && ['columns', 'all'].includes(<string>currentFocusLevel)
-                && row.columns.length > 0 &&  col.order !== row.columns[row.columns.length - 1].order
-              "
+              <div v-if="columnsAreVisible && isMiddleColumn(row, col)"
                    class="flex flex-col border items-center justify-center">
-                <button class="flex p-2 bg-gray-200 border rounded-full" type="button">
-                  <Icon name="ic:round-plus"/>
-                  <span class="sr-only">Add col</span>
-                </button>
+                <FormButton class="absolute">
+                  Add column
+                </FormButton>
               </div>
             </div>
-
-            <div v-if="currentFocusLevel !== 'none' && ['columns', 'all'].includes(<string>currentFocusLevel)"
+            <div v-if="columnsAreVisible"
                  class="flex flex-col border items-center justify-center">
-              <button class="flex p-2 bg-gray-200 border rounded-full" type="button">
-                <Icon name="ic:round-plus"/>
-                <span class="sr-only">Add col</span>
-              </button>
+              <FormButton class="absolute">
+                Add column
+              </FormButton>
             </div>
-
           </div>
-          <div v-if="currentFocusLevel !== 'none'  && ['rows', 'all'].includes(<string>currentFocusLevel)"
+          <div v-if="rowsAreVisible"
                class="flex flex-col justify-center items-center border">
-            <button class="flex p-2 w-fit border bg-gray-200 justify-center rounded-full" type="button">
-              <Icon name="ic:round-plus"/>
-              <span class="sr-only">Add row</span>
-            </button>
+            <FormButton class="absolute">
+              Add row
+            </FormButton>
           </div>
         </div>
       </form>

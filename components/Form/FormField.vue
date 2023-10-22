@@ -1,5 +1,5 @@
-<script setup lang="ts">
-import { Field } from '~/types';
+<script lang="ts" setup>
+import {Field} from '~/types';
 
 /**
  * This component is used to render a single field.
@@ -14,7 +14,7 @@ const {field} = defineProps<{
 </script>
 
 <template>
-<div class="p-2">
+  <div class="p-4">
     {{ field.model }}
-</div>
+  </div>
 </template>
