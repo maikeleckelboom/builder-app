@@ -3,8 +3,8 @@
 </script>
 
 <template>
-  <button class="flex p-2 border bg-gray-200 rounded-full " type="button">
-    <span :class="$slots.label?.()?.length ? 'p-2' : ''">
+  <button class="flex p-1 border  rounded-full " type="button" :class="$slots.label?.()?.length ? '' : 'bg-gray-200'">
+    <span :class="$slots.label?.()?.length ? 'px-1' : ''">
       <slot name="label">
       </slot>
     </span>
